@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory</title>
+    <link rel="stylesheet" href="inventory.css">
+    <style>
+        :root {
+    --primary-bg: #f7f9fc;
+    --white: #ffffff;
+    --border: #e1e5ea;
+    --text-dark: #2d3436;
+    --text-light: #636e72;
+    --danger: #ff4757;
+    --danger-hover: #ff6b81;
+    --low-stock: #ffe0e3;
+    --medium-stock: #fff3cd;
+    --high-stock: #d4edda;
+    --shadow: rgba(0, 0, 0, 0.1);
+}
+
+body {
+    background-color: var(--primary-bg);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+.table-container {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px var(--shadow);
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 1200px;
+    animation: slideIn 0.3s ease-out;
+}
+
+h2 {
+    color: var(--text-dark);
+    margin-bottom: 20px;
+}
+
+.inventory-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 10px;
+}
+
+.inventory-table th,
+.inventory-table td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+.inventory-table th {
+    background-color: var(--primary-bg);
+    color: var(--text-dark);
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+.inventory-table tr {
+    transition: all 0.3s ease;
+}
+
+.inventory-table tr:hover {
+    background-color: var(--primary-bg);
+    transform: translateY(-2px);
+}
+
+.inventory-table td {
+    color: var(--text-light);
+}
+
+.delete-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--danger);
+    color: var(--white);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.delete-btn:hover {
+    background-color: var(--danger-hover);
+}
+
+.delete-btn::after {
+    content: '×';
+    margin-left: 5px;
+}
+
+.quantity-badge {
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.quantity-low {
+    background-color: var(--low-stock);
+    color: var(--danger);
+}
+
+.quantity-medium {
+    background-color: var(--medium-stock);
+    color: #ffa502;
+}
+
+.quantity-high {
+    background-color: var(--high-stock);
+    color: #28a745;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+}
+
+@media (max-width: 768px) {
+    .table-container {
+        padding: 10px;
+        margin: 10px;
+    }
+
+    .inventory-table th,
+    .inventory-table td {
+        padding: 12px 8px;
+        font-size: 0.9rem;
+    }
+
+    .delete-btn {
+        padding: 6px 12px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="table-container">
+        <h2>Inventory List</h2>
+        <table class="inventory-table">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Barcode</th>
+                    <th>Price</th>
+                    <th>Expiry Date</th>
+                    <th>Quantity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="inventoryTableBody">
+                <!-- Table data will be populated here -->
+            </tbody>
+        </table>
+    </div>
+    <script>
+        function loadInventoryTable() {
+    const inventoryItems = JSON.parse(localStorage.getItem('inventoryItems')) || [];
+    const tableBody = document.getElementById('inventoryTableBody');
+    
+    tableBody.innerHTML = '';
+    
+    inventoryItems.forEach((item, index) => {
+        const row = document.createElement('tr');
+        
+        // Format the date
+        const formattedDate = new Date(item.expiryDate).toLocaleDateString();
+        
+        // Get quantity status
+        const quantityStatus = getQuantityStatus(item.quantity);
+        
+        row.innerHTML = `
+            <td>${item.productName}</td>
+            <td>${item.barcode}</td>
+            <td>$${parseFloat(item.price).toFixed(2)}</td>
+            <td>${formattedDate}</td>
+            <td>
+                <span class="quantity-badge ${quantityStatus.class}">
+                    ${item.quantity} units
+                </span>
+            </td>
+            <td>
+                <button class="delete-btn" onclick="deleteItem(${index})">Delete</button>
+            </td>
+        `;
+        
+        // Add staggered animation delay
+        row.style.animation = `slideIn 0.3s ease-out ${index * 0.1}s both`;
+        
+        tableBody.appendChild(row);
+    });
+}
+
+function getQuantityStatus(quantity) {
+    if (quantity <= 5) {
+        return { class: 'quantity-low' };
+    } else if (quantity <= 20) {
+        return { class: 'quantity-medium' };
+    } else {
+        return { class: 'quantity-high' };
+    }
+}
+
+function deleteItem(index) {
+    const row = document.querySelectorAll('#inventoryTableBody tr')[index];
+    
+    if (confirm('Are you sure you want to delete this item?')) {
+        // Add fade out animation
+        row.style.animation = 'fadeOut 0.3s ease-out forwards';
+        
+        setTimeout(() => {
+            const inventoryItems = JSON.parse(localStorage.getItem('inventoryItems')) || [];
+            inventoryItems.splice(index, 1);
+            localStorage.setItem('inventoryItems', JSON.stringify(inventoryItems));
+            loadInventoryTable();
+        }, 300);
+    }
+}
+
+// Load the table when the page loads
+document.addEventListener('DOMContentLoaded', loadInventoryTable);
+    </script>
+    <script src="inventory.js"></script>
+</body>
+</html>
