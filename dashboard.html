@@ -9,147 +9,6 @@
     <title>Document</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
-        ::-webkit-scrollbar {
-    width: 8px;
-    height: 5px;
-}
-
-::-webkit-scrollbar-track {
-    background: rgb(92, 124, 152);
-}
-
-::-webkit-scrollbar-thumb {
-    background: #2c3e50;
-    border-radius: 4px;
-}
-        .table-container {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 24px;
-    margin: 24px auto;
-    max-width: 100%;
-    animation: slideIn 0.3s ease-out;
-    overflow-x:scroll;
-}
-
-h2 {
-    color: #2c3e50;
-    margin-bottom: 20px;
-}
-
-.inventory-table {
-    width: 200%;
-    border-collapse: separate;
-    border-spacing: 0;
-    margin-top: 10px;
-}
-
-.inventory-table th,
-.inventory-table td {
-    padding: 16px;
-    text-align: center;
-    border-bottom: 1px solid #6e929e;
-}
-
-.inventory-table th {
-    background-color: #f8f9fa;
-    color: #2c3e50;
-    font-weight: 600;
-    font-size: 0.9rem;
-    letter-spacing: 0.5px;
-}
-
-.inventory-table tr {
-    transition: all 0.3s ease;
-}
-
-.inventory-table tr:hover {
-    background-color: #f8f9fa;
-    transform: translateY(-2px);
-}
-
-.inventory-table td {
-    color: rgb(92, 124, 152);
-}
-
-.delete-btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    background-color: #ff4757;
-    color: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.delete-btn:hover {
-    background-color: #e74c3c;
-}
-
-.delete-btn::after {
-    content: '×';
-    margin-left: 5px;
-}
-
-.quantity-badge {
-    padding: 6px 12px;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    font-weight: 500;
-}
-
-.quantity-low {
-    background-color: #ffe0e3;
-    color: #ff4757;
-}
-
-.quantity-medium {
-    background-color: #fff3cd;
-    color: #ffa502;
-}
-
-.quantity-high {
-    background-color: #d4edda;
-    color: #2ed573;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeOut {
-    to {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-}
-
-@media (max-width: 768px) {
-    .table-container {
-        padding: 10px;
-        margin: 10px;
-    }
-
-    .inventory-table th,
-    .inventory-table td {
-        padding: 12px 8px;
-        font-size: 0.9rem;
-    }
-
-    .delete-btn {
-        padding: 6px 12px;
-    }
-}
     </style>
 </head>
 
@@ -256,7 +115,74 @@ h2 {
             </div>
         </div>
         
-        <div class="container" id="profile"></div>
+        <div class="container" id="profile">
+            <div class="profile-container">
+                <div class="profile-header">
+                    <h1>Profile</h1>
+                </div>
+                
+                <div class="qr-container">
+                    <!-- Simple placeholder QR code using SVG -->
+                    <svg class="qr-code" viewBox="0 0 100 100">
+                        <!-- QR code background -->
+                        <rect width="100" height="100" fill="white"/>
+                        <!-- Sample QR code pattern - simplified for demonstration -->
+                        <g fill="black">
+                            <rect x="10" y="10" width="20" height="20"/>
+                            <rect x="70" y="10" width="20" height="20"/>
+                            <rect x="10" y="70" width="20" height="20"/>
+                            <rect x="40" y="40" width="20" height="20"/>
+                            <!-- Position detection patterns -->
+                            <path d="M15,15 h10 v10 h-10 z"/>
+                            <path d="M75,15 h10 v10 h-10 z"/>
+                            <path d="M15,75 h10 v10 h-10 z"/>
+                            <!-- Additional data modules -->
+                            <rect x="40" y="10" width="5" height="5"/>
+                            <rect x="50" y="20" width="5" height="5"/>
+                            <rect x="60" y="30" width="5" height="5"/>
+                            <rect x="20" y="40" width="5" height="5"/>
+                            <rect x="70" y="50" width="5" height="5"/>
+                            <rect x="80" y="60" width="5" height="5"/>
+                        </g>
+                    </svg>
+                    <button class="download-btn" onclick="downloadQR()">Download QR Code</button>
+                </div>
+                
+                <div class="profile-info">
+                    <div class="info-item">
+                        <div class="info-label">Username</div>
+                        <div class="info-value" id="username">johndoe123</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Store Name</div>
+                        <div class="info-value" id="storeName">John's Electronics</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Store Address</div>
+                        <div class="info-value" id="storeAddress">123 Main St, City, Country</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Name</div>
+                        <div class="info-value" id="name">John Doe</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Phone Number</div>
+                        <div class="info-value" id="phone">+1 234 567 8900</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Email</div>
+                        <div class="info-value" id="email">john@example.com</div>
+                    </div>
+                </div>
+                
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
 
 
         <nav class="bottom-nav">

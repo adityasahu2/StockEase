@@ -627,3 +627,146 @@ video {
     margin-bottom: 12px;
     animation: slideIn 0.3s ease;
 }
+
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgb(92, 124, 152);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #2c3e50;
+    border-radius: 4px;
+}
+        .table-container {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    margin: 24px auto;
+    max-width: 100%;
+    animation: slideIn 0.3s ease-out;
+    overflow-x:scroll;
+}
+
+h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.inventory-table {
+    width: 210%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 10px;
+}
+
+.inventory-table th,
+.inventory-table td {
+    padding: 16px;
+    text-align: center;
+    border-bottom: 1px solid #6e929e;
+}
+
+.inventory-table th {
+    background-color: #f8f9fa;
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+.inventory-table tr {
+    transition: all 0.3s ease;
+}
+
+.inventory-table tr:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-2px);
+}
+
+.inventory-table td {
+    color: rgb(92, 124, 152);
+}
+
+.delete-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background-color: #ff4757;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.delete-btn:hover {
+    background-color: #e74c3c;
+}
+
+.delete-btn::after {
+    content: '×';
+    margin-left: 5px;
+}
+
+.quantity-badge {
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.quantity-low {
+    background-color: #ffe0e3;
+    color: #ff4757;
+}
+
+.quantity-medium {
+    background-color: #fff3cd;
+    color: #ffa502;
+}
+
+.quantity-high {
+    background-color: #d4edda;
+    color: #2ed573;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+}
+
+@media (max-width: 768px) {
+    .table-container {
+        padding: 10px;
+        margin: 10px;
+    }
+
+    .inventory-table th,
+    .inventory-table td {
+        padding: 12px 8px;
+        font-size: 0.9rem;
+    }
+
+    .delete-btn {
+        padding: 6px 12px;
+    }
+}
