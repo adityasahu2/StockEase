@@ -1,9 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Initialize empty cart if not exists
-    if (!localStorage.getItem('cart')) {
-        localStorage.setItem('cart', JSON.stringify([]));
-    }
-
     // Navigation ripple effect
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', function(e) {
@@ -25,6 +20,11 @@ document.addEventListener("DOMContentLoaded", function () {
             setTimeout(() => ripple.remove(), 600);
         });
     });
+    // Initialize empty cart if not exists
+    if (!localStorage.getItem('cart')) {
+        localStorage.setItem('cart', JSON.stringify([]));
+    }
+
 
     function getStockData() {
         const items = JSON.parse(localStorage.getItem('inventoryItems') || '[]');
@@ -34,31 +34,93 @@ document.addEventListener("DOMContentLoaded", function () {
             available: [],
             all: items
         };
-
+    
         items.forEach(item => {
+            // Create status object with consistent property names
+            const stockItem = {
+                name: item.productName, // Changed from just item.name
+                quantity: item.quantity,
+                status: item.quantity <= 5 ? 'low' : 
+                       item.quantity <= 20 ? 'running' : 'available'
+            };
+    
+            // Push to appropriate category
             if (item.quantity <= 5) {
-                stockData.low.push({
-                    name: item.productName,
-                    quantity: item.quantity,
-                    status: 'low'
-                });
+                stockData.low.push(stockItem);
             } else if (item.quantity <= 20) {
-                stockData.running.push({
-                    name: item.productName,
-                    quantity: item.quantity,
-                    status: 'running'
-                });
+                stockData.running.push(stockItem);
             } else {
-                stockData.available.push({
-                    name: item.productName,
-                    quantity: item.quantity,
-                    status: 'available'
-                });
+                stockData.available.push(stockItem);
             }
         });
-
+    
         return stockData;
     }
+    
+    // Update search functionality
+    function getStockData() {
+    const items = JSON.parse(localStorage.getItem('inventoryItems') || '[]');
+    const stockData = {
+        low: [],
+        running: [],
+        available: [],
+        all: items
+    };
+
+    items.forEach(item => {
+        // Create status object with consistent property names
+        const stockItem = {
+            name: item.productName, // Changed from just item.name
+            quantity: item.quantity,
+            status: item.quantity <= 5 ? 'low' : 
+                   item.quantity <= 20 ? 'running' : 'available'
+        };
+
+        // Push to appropriate category
+        if (item.quantity <= 5) {
+            stockData.low.push(stockItem);
+        } else if (item.quantity <= 20) {
+            stockData.running.push(stockItem);
+        } else {
+            stockData.available.push(stockItem);
+        }
+    });
+
+    return stockData;
+}
+
+// Update search functionality
+const searchBar = document.querySelector('.search-bar');
+searchBar.addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const stockData = getStockData();
+    const filteredItems = stockData.all.filter(item => 
+        item.productName.toLowerCase().includes(searchTerm) // Changed from item.name
+    ).map(item => ({
+        name: item.productName,
+        quantity: item.quantity,
+        status: item.quantity <= 5 ? 'low' : 
+               item.quantity <= 20 ? 'running' : 'available'
+    }));
+
+    const stockList = document.getElementById('stockList');
+    stockList.classList.remove('visible');
+    
+    setTimeout(() => {
+        stockList.innerHTML = filteredItems
+            .map(item => `
+                <div class="stock-item">
+                    <span class="span">
+                        <span class="status-indicator ${getStatusClass(item.status)}"></span>
+                        ${item.name}
+                    </span>
+                    <span class="quantity-badge">${item.quantity} units</span>
+                </div>
+            `).join('');
+        
+        stockList.classList.add('visible');
+    }, 300);
+});
 
     function getStatusClass(status) {
         switch(status) {
@@ -75,7 +137,17 @@ document.addEventListener("DOMContentLoaded", function () {
         stockList.classList.remove('visible');
         
         setTimeout(() => {
-            stockList.innerHTML = stockData[type]
+            // For 'all' type, use stockData.all directly and map it to the right format
+            const itemsToShow = type === 'all' ? 
+                stockData.all.map(item => ({
+                    name: item.productName,
+                    quantity: item.quantity,
+                    status: item.quantity <= 5 ? 'low' : 
+                           item.quantity <= 20 ? 'running' : 'available'
+                })) : 
+                stockData[type];
+    
+            stockList.innerHTML = itemsToShow
                 .map(item => `
                     <div class="stock-item">
                         <span class="span">
@@ -89,57 +161,15 @@ document.addEventListener("DOMContentLoaded", function () {
             stockList.classList.add('visible');
         }, 300);
     }
-
-    // Initialize with all products
-    showStock('all');
-
+    
+    // Make sure this is called when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        showStock('all');
+    });
     // Event listeners for stock filters
     document.getElementById('low').addEventListener('click', () => showStock('low'));
     document.getElementById('running').addEventListener('click', () => showStock('running'));
     document.getElementById('available').addEventListener('click', () => showStock('available'));
-
-    // Search functionality
-    const searchBar = document.querySelector('.search-bar');
-    searchBar.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        const stockData = getStockData();
-        const filteredItems = stockData.all.filter(item => 
-            item.name.toLowerCase().includes(searchTerm)
-        );
-
-        const stockList = document.getElementById('stockList');
-        stockList.classList.remove('visible');
-        
-        setTimeout(() => {
-            stockList.innerHTML = filteredItems
-                .map(item => `
-                    <div class="stock-item">
-                        <span class="span">
-                            <span class="status-indicator ${getStatusClass(item.status)}"></span>
-                            ${item.name}
-                        </span>
-                        <span class="quantity-badge">${item.quantity} units</span>
-                    </div>
-                `).join('');
-            
-            stockList.classList.add('visible');
-        }, 300);
-    });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -341,35 +371,6 @@ function initializeBillingScanner() {
     );
     htmlscanner.render(onBillingScanSuccess);
 }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     
