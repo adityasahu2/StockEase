@@ -43,7 +43,7 @@
 }
 
 #moto p {
-    
+
     color: rgb(92, 124, 152);
     text-align: center;
     width: max-content;
@@ -136,7 +136,7 @@ span {
     width: 100%;
 }
 
-#html5-qrcode-select-camera{
+#html5-qrcode-select-camera {
     color: rgb(92, 124, 152);
     text-align: center;
     width: max-content;
@@ -149,8 +149,9 @@ span {
     border: 1px solid #6e929e;
 }
 
-#signin-using-username, #signin-using-qr{
-    margin:40px auto;
+#signin-using-username,
+#signin-using-qr {
+    margin: 40px auto;
 }
 
 .container {
@@ -162,7 +163,7 @@ span {
     box-shadow: 0 4px 20px rgba(51, 102, 255, 0.1);
 }
 
-#signin-form{
+#signin-form {
     margin: 20px;
 }
 
@@ -221,9 +222,19 @@ span {
 }
 
 @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
 }
 
 .shake {

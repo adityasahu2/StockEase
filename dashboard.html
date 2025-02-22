@@ -8,9 +8,6 @@
     <script src="dashboard.js"></script>
     <title>Document</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
-    <style>
-        
-    </style>
 </head>
 
 <body>
@@ -64,33 +61,34 @@
         </div>
         <div class="container" id="add-stock">
             <div class="section">
-                <div id="my-qr-reader2" class="qr-scanner"></div>  
-                </div>
-                <div>              
+                <div id="my-qr-reader2" class="qr-scanner"></div>
+            </div>
+            <div>
                 <form class="stock-form" id="stockForm">
                     <div class="input-group search-container">
-                        <input type="text"class="search-bar" id="barcodeInput" placeholder="Barcode" required>
+                        <input type="text" class="search-bar" id="barcodeInput" placeholder="Barcode" required>
                     </div>
                     <div class="input-group search-container">
-                        <input type="text"class="search-bar" id="productName" placeholder="Product Name" required>
+                        <input type="text" class="search-bar" id="productName" placeholder="Product Name" required>
                     </div>
                     <div class="input-group search-container">
-                        <input type="number"class="search-bar" id="quantity" placeholder="Quantity" required min="1">
+                        <input type="number" class="search-bar" id="quantity" placeholder="Quantity" required min="1">
                     </div>
                     <div class="input-group search-container">
-                        <input type="number"class="search-bar" id="price" placeholder="Price" required min="0" step="0.01">
+                        <input type="number" class="search-bar" id="price" placeholder="Price" required min="0"
+                            step="0.01">
                     </div>
                     <div class="input-group search-container">
-                        <input type="date"class="search-bar" id="expiryDate" placeholder="Expiry Date" required>
+                        <input type="date" class="search-bar" id="expiryDate" placeholder="Expiry Date" required>
                     </div>
                     <button type="submit" class="add-button" id="stockForm">Add/Update Stock</button>
                 </form>
-                
+
                 <div class="button-container">
                     <button class="clear-button" id="clearDisplay">Clear Display</button>
                     <button class="show-button" id="showItems">Show Items</button>
                 </div>
-                
+
                 <div id="itemsList"></div>
             </div>
         </div>
@@ -115,50 +113,50 @@
                 </table>
             </div>
         </div>
-        
+
         <div class="container" id="profile">
             <div class="profile-container">
                 <div class="profile-header">
                     <h1>Profile</h1>
                 </div>
-                
+
                 <div class="qr-container">
                     <img src="Assets/qr.png" alt="QR Code" id="qrImage">
                     <button class="download-btn">Download QR Code</button>
                 </div>
-                
+
                 <div class="profile-info">
                     <div class="info-item">
                         <div class="info-label">Username</div>
                         <div class="info-value" id="username">stockease123</div>
                     </div>
-                    
+
                     <div class="info-item">
                         <div class="info-label">Store Name</div>
                         <div class="info-value" id="storeName">StockEase</div>
                     </div>
-                    
+
                     <div class="info-item">
                         <div class="info-label">Store Address</div>
                         <div class="info-value" id="storeAddress">Bhubaneswar, Odisha</div>
                     </div>
-                    
+
                     <div class="info-item">
                         <div class="info-label">Name</div>
                         <div class="info-value" id="name">Stock Ease</div>
                     </div>
-                    
+
                     <div class="info-item">
                         <div class="info-label">Phone Number</div>
                         <div class="info-value" id="phone">0123456789</div>
                     </div>
-                    
+
                     <div class="info-item">
                         <div class="info-label">Email</div>
                         <div class="info-value" id="email">stockease@gmail.com</div>
                     </div>
                 </div>
-                
+
                 <button class="logout-btn" id="logout">Logout</button>
             </div>
         </div>
@@ -202,9 +200,6 @@
             </a>
         </nav>
     </div>
-    <script>
-        
-    </script>
 </body>
 
 </html>
