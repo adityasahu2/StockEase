@@ -12,7 +12,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     domReady(function () {
         function onScanSuccess(decodeText, decodeResult) {
-            alert("You Qr is : " + decodeText, decodeResult);
+            const result = decodeText.split('_');
+            document.getElementById('identifier').value=result[0]
+            document.getElementById('password').value=result[1]
+    
+            const button = document.querySelector('.signin-button');
+            button.click();
         }
 
         let htmlscanner = new Html5QrcodeScanner(
@@ -35,12 +40,12 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("user").style.display = "none";
 
     });
+
     document.getElementById('signin-form').addEventListener('submit', function(e) {
         e.preventDefault();
         
         const identifier = document.getElementById('identifier');
         const password = document.getElementById('password');
-        const button = document.querySelector('.signin-button');
         
         // Reset previous errors
         resetErrors();
@@ -56,7 +61,30 @@ document.addEventListener("DOMContentLoaded", function () {
             showError(password, 'Password must be at least 8 characters');
             return;
         }
+
+        const users = JSON.parse(localStorage.getItem('users')||'[]');
+        
+        // Check if the user exists in the database
+        const user = users.find(user => user.username === identifier.value);
+        
+        if (!user) {
+            showError(identifier, 'Invalid username or email');
+            return;
+        }
+        
+        // Check if the password matches the user's stored password
+        if (user.password!== password.value) {
+            showError(password, 'Incorrect password');
+            return;
+        }
+        
+        // Store the user's information in local storage
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        
+        // Redirect to the dashboard
+        window.location.href = 'dashboard.html';
     });
+
 
     function isValidIdentifier(identifier) {
         // Check if it's a valid email

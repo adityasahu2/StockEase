@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    
     // Navigation ripple effect
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', function(e) {
@@ -20,14 +22,16 @@ document.addEventListener("DOMContentLoaded", function () {
             setTimeout(() => ripple.remove(), 600);
         });
     });
+
+
+
     // Initialize empty cart if not exists
     if (!localStorage.getItem('cart')) {
         localStorage.setItem('cart', JSON.stringify([]));
     }
 
-
     function getStockData() {
-        const items = JSON.parse(localStorage.getItem('inventoryItems') || '[]');
+        const items = JSON.parse(localStorage.getItem(`inventoryItems${currentUser.username}`) || '[]');
         const stockData = {
             low: [],
             running: [],
@@ -59,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
     // Update search functionality
     function getStockData() {
-    const items = JSON.parse(localStorage.getItem('inventoryItems') || '[]');
+    const items = JSON.parse(localStorage.getItem(`inventoryItems${currentUser.username}`) || '[]');
     const stockData = {
         low: [],
         running: [],
@@ -195,7 +199,7 @@ scanInput.addEventListener('keypress', function (e) {
 });
 
 function handleBillingScan(barcode) {
-    const inventoryItems = JSON.parse(localStorage.getItem('inventoryItems')) || [];
+    const inventoryItems = JSON.parse(localStorage.getItem(`inventoryItems${currentUser.username}`)) || [];
     const product = inventoryItems.find(item => item.barcode === barcode);
 
     if (product) {
@@ -210,7 +214,7 @@ function handleBillingScan(barcode) {
 }
 
 function addToCart(barcode) {
-    const inventoryItems = JSON.parse(localStorage.getItem('inventoryItems')) || [];
+    const inventoryItems = JSON.parse(localStorage.getItem(`inventoryItems${currentUser.username}`)) || [];
     const product = inventoryItems.find(item => item.barcode === barcode);
     
     if (!product) return;
@@ -238,25 +242,25 @@ function addToCart(barcode) {
 }
 
 function decreaseInventoryQuantity(barcode) {
-    const inventoryItems = JSON.parse(localStorage.getItem('inventoryItems')) || [];
+    const inventoryItems = JSON.parse(localStorage.getItem(`inventoryItems${currentUser.username}`)) || [];
     const updatedItems = inventoryItems.map(item => {
         if (item.barcode === barcode) {
             return { ...item, quantity: item.quantity - 1 };
         }
         return item;
     });
-    localStorage.setItem('inventoryItems', JSON.stringify(updatedItems));
+    localStorage.setItem(`inventoryItems${currentUser.username}`, JSON.stringify(updatedItems));
 }
 
 function increaseInventoryQuantity(barcode, amount = 1) {
-    const inventoryItems = JSON.parse(localStorage.getItem('inventoryItems')) || [];
+    const inventoryItems = JSON.parse(localStorage.getItem(`inventoryItems${currentUser.username}`)) || [];
     const updatedItems = inventoryItems.map(item => {
         if (item.barcode === barcode) {
             return { ...item, quantity: item.quantity + amount };
         }
         return item;
     });
-    localStorage.setItem('inventoryItems', JSON.stringify(updatedItems));
+    localStorage.setItem(`inventoryItems${currentUser.username}`, JSON.stringify(updatedItems));
 }
 
 function updateDisplay() {
@@ -309,7 +313,7 @@ function decreaseQuantity(index) {
 
 function increaseQuantity(index) {
     const item = cart[index];
-    const inventoryItems = JSON.parse(localStorage.getItem('inventoryItems')) || [];
+    const inventoryItems = JSON.parse(localStorage.getItem(`inventoryItems${currentUser.username}`)) || [];
     const inventoryItem = inventoryItems.find(invItem => invItem.barcode === item.barcode);
 
     if (inventoryItem && inventoryItem.quantity > 0) {
@@ -405,7 +409,7 @@ icons.forEach((icon, index) => {
     lastScannedCode = null;
 
     function handleScan(decodeText) {
-        const items = JSON.parse(localStorage.getItem('inventoryItems') || '[]');
+        const items = JSON.parse(localStorage.getItem(`inventoryItems${currentUser.username}`) || '[]');
         const existingProduct = items.find(item => item.barcode === decodeText);
 
         document.getElementById('barcodeInput').value = decodeText;
@@ -431,7 +435,7 @@ icons.forEach((icon, index) => {
     }
 
     function updateItemsList() {
-        const items = JSON.parse(localStorage.getItem('inventoryItems') || '[]');
+        const items = JSON.parse(localStorage.getItem(`inventoryItems${currentUser.username}`) || '[]');
         const itemsList = document.getElementById('itemsList');
         itemsList.innerHTML = '';
         
@@ -519,7 +523,7 @@ icons.forEach((icon, index) => {
             return;
         }
         
-        const items = JSON.parse(localStorage.getItem('inventoryItems') || '[]');
+        const items = JSON.parse(localStorage.getItem(`inventoryItems${currentUser.username}`) || '[]');
         const existingProductIndex = items.findIndex(item => item.barcode === barcode);
 
         if (existingProductIndex !== -1) {
@@ -536,11 +540,118 @@ icons.forEach((icon, index) => {
             });
         }
 
-        localStorage.setItem('inventoryItems', JSON.stringify(items));
+        localStorage.setItem(`inventoryItems${currentUser.username}`, JSON.stringify(items));
         updateItemsList();
         
         document.getElementById('stockForm').reset();
         document.getElementById('productName').readOnly = false;
         document.getElementById('price').readOnly = false;
     });
+    function loadInventoryTable() {
+        const inventoryItems = JSON.parse(localStorage.getItem(`inventoryItems${currentUser.username}`) || '[]');
+    
+        const tableBody = document.getElementById('inventoryTableBody');
+        
+        tableBody.innerHTML = '';
+        
+        inventoryItems.forEach((item, index) => {
+        const row = document.createElement('tr');
+    
+        // Format the date
+        const formattedDate = new Date(item.expiryDate).toLocaleDateString();
+    
+        // Get quantity status
+        const quantityStatus = getQuantityStatus(item.quantity);
+    
+        row.innerHTML = `
+            <td>${item.productName}</td>
+            <td>${item.barcode}</td>
+            <td>₹${parseFloat(item.price).toFixed(2)}</td>
+            <td>${formattedDate}</td>
+            <td>
+                <span class="quantity-badge ${quantityStatus.class}">
+                    ${item.quantity} units
+                </span>
+            </td>
+            <td>
+                <button class="delete-btn">Delete</button>
+            </td>
+        `;
+    
+        // Add staggered animation delay
+        row.style.animation = `slideIn 0.3s ease-out ${index * 0.1}s both`;
+    
+        // Append row to table
+        tableBody.appendChild(row);
+    
+        // Attach event listener to delete button
+        const deleteBtn = row.querySelector('.delete-btn');
+        deleteBtn.addEventListener('click', () => deleteItem(index));
+    });
+            }
+    
+    function getQuantityStatus(quantity) {
+        if (quantity <= 5) {
+            return { class: 'quantity-low' };
+        } else if (quantity <= 20) {
+            return { class: 'quantity-medium' };
+        } else {
+            return { class: 'quantity-high' };
+        }
+    }
+    
+    function deleteItem(index) {
+        const row = document.querySelectorAll('#inventoryTableBody tr')[index];
+        
+        if (confirm('Are you sure you want to delete this item?')) {
+            // Add fade out animation
+            row.style.animation = 'fadeOut 0.3s ease-out forwards';
+            
+            setTimeout(() => {
+                const inventoryItems = JSON.parse(localStorage.getItem(`inventoryItems${currentUser.username}`) || '[]');
+                inventoryItems.splice(index, 1);
+                localStorage.setItem(`inventoryItems${currentUser.username}`, JSON.stringify(inventoryItems));
+                loadInventoryTable();
+            }, 300);
+        }
+    }
+    
+    loadInventoryTable();
+
+    const username = document.getElementById('username');
+    const storeName = document.getElementById('storeName');
+    const storeAddress = document.getElementById('storeAddress');
+    const name = document.getElementById('name');
+    const phone = document.getElementById('phone');
+    const email = document.getElementById('email');
+
+    username.textContent = currentUser.username;
+    storeName.textContent = currentUser.storeName;
+    storeAddress.textContent = currentUser.storeAddress;
+    name.textContent = currentUser.name;
+    phone.textContent = currentUser.phone;
+    email.textContent = currentUser.email;
+
+
+    const downloadButton = document.querySelector(".download-btn");
+    const qrImage = document.getElementById("qrImage");
+
+    downloadButton.addEventListener("click", () => {
+        downloadQR(qrImage);
+    });
+    function downloadQR(imageElement) {
+        const imageUrl = imageElement.src;
+        const link = document.createElement("a");
+        link.href = imageUrl;
+        link.download = "QR_Code.png";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+    document.getElementById("logout").addEventListener("click", function () {
+        localStorage.removeItem("currentUser");
+        window.location.href = "index.html";
+    });
+
+    qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${currentUser.username}_${currentUser.password}`
 });

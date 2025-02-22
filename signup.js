@@ -53,19 +53,29 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         
         if (!isValid) return;
-        window.location.href = "signin.html";
-        // // Show loading state
-        // const button = document.querySelector('.signup-button');
-        // button.classList.add('loading');
-        // button.textContent = 'Creating Account...';
+
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const existingUser = users.find(user => user.username === username.value || user.email === email.value);
+        if (existingUser) {
+            alert('Username or email already exists');
+            return;
+        }
         
-        // // Simulate API call
-        // setTimeout(() => {
-        //     button.classList.remove('loading');
-        //     button.textContent = 'Create Account';
-        //     console.log('Account created successfully');
-        //     // You would typically redirect here
-        // }, 2000);
+        const user = {
+            name: name.value,
+            phone: phone.value,
+            username: username.value,
+            email: email.value,
+            password: password.value,
+            storeName: storeName.value,
+            storeAddress: storeAddress.value
+        };
+        users.push(user);
+        localStorage.setItem('users', JSON.stringify(users));
+        alert('Registration successful! You can now log in');
+        document.getElementById('signup-form').reset();
+
+        window.location.href = "signin.html";
     });
 
     // Validation functions
